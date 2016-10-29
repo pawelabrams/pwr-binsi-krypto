@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Pierwszy przykład szyfrowania</title>
+    </head>
+    <body>
+        <div>
+            <input id="plaintext" name="plaintext">
+            <select id="encryptionAlgo">
+                <option value=""> </option>
+                <option value="caesar">Szyfr Cezara</option>
+            </select>
+            <span id="encryptionOptions">
+            </span>
+            <button id="encrypt" type="button">Zaszyfruj</button>
+        </div>
+        <section id="communication">
+        </section>
+        <div>
+            <select id="decryptionAlgo">
+                <option value=""> </option>
+                <option value="caesar">Szyfr Cezara</option>
+            </select>
+            <span id="encryptionOptions">
+            </span>
+            <button id="decrypt" type="button">Odszyfruj</button>
+        </div>
+        <section id="decryption">
+        </section>
+        <script src="js/main.js"></script>
+    </body>
+</html>
