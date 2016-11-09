@@ -131,7 +131,7 @@ var app = {
             $("#communication").innerHTML = app.algos[app.encryptionAlgo].encryption($("#plaintext").value);
         });
         on($("#decrypt"), 'click', function() {
-            $("#decryption").innerHTML = app.algos[app.decryptionAlgo].decryption($("#communication").innerHTML);
+            $("#decoded").innerHTML = app.algos[app.decryptionAlgo].decryption($("#communication").innerHTML);
         });
     });
 })();

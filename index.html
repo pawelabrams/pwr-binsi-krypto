@@ -3,10 +3,11 @@
     <head>
         <meta charset="utf-8">
         <title>Pierwszy przykład szyfrowania</title>
+        <link rel="stylesheet" href="css/main.css">
     </head>
     <body>
-        <div>
-            <input id="plaintext" name="plaintext">
+        <div class="encryption">
+            <textarea id="plaintext" name="plaintext"></textarea>
             <select id="encryptionAlgo">
                 <option value=""> </option>
                 <option value="caesar">Szyfr Cezara</option>
@@ -18,7 +19,7 @@
         </div>
         <section id="communication">
         </section>
-        <div>
+        <div class="decryption">
             <select id="decryptionAlgo">
                 <option value=""> </option>
                 <option value="caesar">Szyfr Cezara</option>
@@ -28,8 +29,11 @@
             </span>
             <button id="decrypt" type="button">Odszyfruj</button>
         </div>
-        <section id="decryption">
+        <section id="decoded">
         </section>
+        <footer class="page-footer">
+            Praca wykonana na zajęciach laboratoryjnych z Kryptografii przez Pawła Abramowicza.
+        </footer>
         <script src="js/main.js"></script>
     </body>
 </html>

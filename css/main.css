@@ -1,0 +1,51 @@
+html {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background-color: #eee;
+}
+
+body {
+    margin: 0 auto;
+    max-width: 800px;
+    width: 95%;
+}
+
+.encryption {
+    margin: 20px 0;
+}
+.encryption textarea {
+    border: 1px solid #ccc;
+    display: block;
+    font-family: serif;
+    height: 100px;
+    padding: 10px;
+    width: 100%;
+}
+
+#communication {
+    background-color: #def;
+    border: 1px dashed #567;
+    padding: 10px;
+    white-space: pre-wrap;
+}
+
+.decryption {
+    margin: 20px 0;
+}
+
+#decoded {
+    background-color: #fed;
+    border: 1px dashed #765;
+    padding: 10px;
+    white-space: pre-wrap;
+}
+
+.page-footer {
+    color: #888;
+    font-family: sans-serif;
+    font-size: small;
+    margin: 20px 0;
+    text-align: center;
+}
