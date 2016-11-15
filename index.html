@@ -6,36 +6,50 @@
         <link rel="stylesheet" href="css/main.css">
     </head>
     <body>
-        <div class="encryption">
-            <textarea id="plaintext" name="plaintext"></textarea>
-            <select id="encryptionAlgo">
-                <option value=""> </option>
-                <option value="caesar">Szyfr Cezara</option>
-                <option value="rot13">ROT13</option>
-                <option value="vigenere">Vigenère</option>
-            </select>
-            <span id="encryptionOptions">
-            </span>
-            <button id="encrypt" type="button">Zaszyfruj</button>
+        <div class="connect">
+            <p>
+                Twoje id to:
+                <input type="text" id="yourId" placeholder="tu pojawi się id" disabled>
+            </p>
+            <p>
+                Połącz z:
+                <input type="text" id="connectId" placeholder="id, np. sarahjones4qdp">
+                <button type="button" id="connectButton">Połącz</button>
+            </p>
         </div>
-        <section id="communication">
-        </section>
-        <div class="decryption">
-            <select id="decryptionAlgo">
-                <option value=""> </option>
-                <option value="caesar">Szyfr Cezara</option>
-                <option value="rot13">ROT13</option>
-                <option value="vigenere">Vigenère</option>
-            </select>
-            <span id="decryptionOptions">
-            </span>
-            <button id="decrypt" type="button">Odszyfruj</button>
+        <div class="hangout" style="display: none;">
+            <div class="decryption">
+                <select id="decryptionAlgo">
+                    <option value=""> </option>
+                    <option value="caesar">Szyfr Cezara</option>
+                    <option value="rot13">ROT13</option>
+                    <option value="vigenere">Vigenère</option>
+                </select>
+                <span id="decryptionOptions">
+                </span>
+                <button id="decrypt" type="button">Odszyfruj</button>
+            </div>
+            <section id="decoded">
+            </section>
+            <div class="encryption">
+                <textarea id="plaintext" name="plaintext"></textarea>
+                <select id="encryptionAlgo">
+                    <option value=""> </option>
+                    <option value="caesar">Szyfr Cezara</option>
+                    <option value="rot13">ROT13</option>
+                    <option value="vigenere">Vigenère</option>
+                </select>
+                <span id="encryptionOptions">
+                </span>
+                <button id="encrypt" type="button">Zaszyfruj</button>
+            </div>
+            <section id="communication">
+            </section>
         </div>
-        <section id="decoded">
-        </section>
         <footer class="page-footer">
             Praca wykonana na zajęciach laboratoryjnych z Kryptografii przez Pawła Abramowicza.
         </footer>
+        <script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
         <script src="js/main.js"></script>
     </body>
 </html>

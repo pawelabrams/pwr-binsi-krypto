@@ -7,19 +7,41 @@ html {
 }
 
 body {
-    margin: 0 auto;
-    max-width: 800px;
-    width: 95%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.connect {
+    padding: 30px 0;
+    font-family: sans-serif;
+    text-align: center;
+}
+.connect input {
+    background: none;
+    border: none;
+    border-bottom: 2px solid #08f;
+    display: block;
+    font-size: 24px;
+    margin: 10px auto;
+    padding: 10px;
+}
+.connect [disabled] {
+    border-bottom-color: #aaa;
+}
+.connect ::-moz-placeholder {
+    color: #999;
 }
 
 .encryption {
-    margin: 20px 0;
+    border: 1px solid #ccc;
+    padding: 20px 0 0;
 }
 .encryption textarea {
-    border: 1px solid #ccc;
+    border: none;
     display: block;
     font-family: serif;
-    height: 100px;
+    height: auto;
     padding: 10px;
     width: 100%;
 }
@@ -36,10 +58,11 @@ body {
 }
 
 #decoded {
-    background-color: #fed;
-    border: 1px dashed #765;
+    background-color: #fff;
+    border: 1px dashed #888;
     padding: 10px;
     white-space: pre-wrap;
+    height: 80%;
 }
 
 .page-footer {
