@@ -9,7 +9,7 @@
         <div class="hangout" style="display: none;">
             <section id="history">
                 <div class="decryption">
-                    <select id="decryptionAlgo">
+                    <select id="decryptionAlgo" title="Zmień algorytm deszyfrowania dla wiadomości przychodzących">
                         <option value=""> </option>
                         <option value="caesar">Szyfr Cezara</option>
                         <option value="rot13">ROT13</option>
@@ -21,8 +21,8 @@
                 </div>
             </section>
             <div class="encryption">
-                <p id="plaintext" contenteditable></p>
-                <select id="encryptionAlgo">
+                <p id="plaintext" contenteditable title="Tekst jawny"></p>
+                <select id="encryptionAlgo" title="Zmień algorytm szyfrowania dla wiadomości wychodzących">
                     <option value=""> </option>
                     <option value="caesar">Szyfr Cezara</option>
                     <option value="rot13">ROT13</option>

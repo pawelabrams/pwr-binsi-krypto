@@ -118,6 +118,8 @@ app.decryptionAlgo = "pass";
             app.context.connection.send(cyphertext);
             // add to history
             addMessage('local', plaintext);
+            // clear plaintext field
+            $("#plaintext").innerHTML = "";
         });
 
         // Data was received
