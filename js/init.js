@@ -1,8 +1,11 @@
-// Can't live w/o EventListeners
-// if (!window.addEventListener)
-//     return;
+/**
+ * Qomm -- Simple Encrypted Messenger
+ * by Paweł Abramowicz
+ * (NOT FOR PRODUCTION USE)
+ * (ABSOLUTELY NO WARRANTY)
+ */
 
-// Simplified dollar function
+// simplified dollar function
 function $(selector, context) {
     context = context || document;
     return context.querySelector(selector);
@@ -13,12 +16,13 @@ function $$(selector, context) {
     return Array.prototype.slice.call(elements);
 }
 
-// Simplified on function
+// simplified on function
 function on(context, event, fn) {
     context = context || window;
     context.addEventListener(event, fn, false);
 }
 
+// app fields initialization
 var app = {
     context: {},
     encryptionAlgo: null,
@@ -28,6 +32,12 @@ var app = {
     algos: {},
     algosOptions: {},
 };
+
+// make encrypted messages show even when no algorithm is selected
+app.algos.pass = {
+    decryption: function (t) { return t; },
+};
+app.decryptionAlgo = "pass";
 
 (function() {
     // Change enc/dec options
@@ -41,6 +51,7 @@ var app = {
                     toAdd = document.createElement("input");
                     toAdd.type = app.algosOptions[algo][i];
                     toAdd.name = i;
+                    toAdd.placeholder = i;
             }
             on(toAdd, "change", function() {
                 app[saveField][i] = this.value;
@@ -49,13 +60,20 @@ var app = {
         }
     }
 
+    // Function to add messages to history div
+    function addMessage(type, msg) {
+        let toAdd = document.createElement("div");
+        toAdd.classList.add(type);
+        toAdd.innerHTML = msg;
+        $("#history").appendChild(toAdd);
+    }
+
     // Bind app.context: .received and .connection and make hangout visible
     function openHangout(conn) {
         conn.on('open', function() {
             // Receive messages
             app.context.received = [];
             conn.on('data', function(data) {
-                console.log('Received '+data);
                 app.context.received.push(data);
                 window.dispatchEvent(new CustomEvent('dataReceive', {'detail': data}));
             });
@@ -63,20 +81,26 @@ var app = {
             app.context.connection = conn;
             // Make hangout visible
             $(".connect").style.display = 'none';
-            $(".hangout").style.display = 'block';
+            $(".hangout").style.display = '';
+            // Add info about who are we talking to
+            addMessage('log', 'Now talking to ' + conn.peer);
         });
     }
 
-    // Add those functions
+    // Add those functions after everything loaded
     on(window, 'load', function () {
         // peerjs
         window.peer = new Peer(undefined, { host: 'abramowicz.org', port: 9517, path: '/qomm'});
-        peer.on('open', function(id) { $("#yourId").value = id; });
+        peer.on('open', function(id) {
+            $("#yourId").value = id;
+            addMessage('log', 'You are ' + window.peer.id);
+        });
         peer.on('connection', openHangout);
         on($("#connectButton"), 'click', function() {
             openHangout(peer.connect($("#connectId").value));
         });
 
+        // GUI: on algorithm change, show corresponding options
         on($("#encryptionAlgo"), 'change', function() {
             app.encryptionAlgo = $("#encryptionAlgo").value;
             changeOptions($("#encryptionOptions"), app.encryptionAlgo, "encryptionOptions");
@@ -85,16 +109,25 @@ var app = {
             app.decryptionAlgo = $("#decryptionAlgo").value;
             changeOptions($("#decryptionOptions"), app.decryptionAlgo, "decryptionOptions");
         });
+
+        // Encryption button was clicked
         on($("#encrypt"), 'click', function() {
-            let cyphertext = app.algos[app.encryptionAlgo].encryption($("#plaintext").value);
-            // $("#communication").innerHTML = cyphertext;
+            let plaintext = $("#plaintext").innerHTML.replace(/<br[^>]*>/gi, "\n");
+            // send cyphertext
+            let cyphertext = app.algos[app.encryptionAlgo].encryption(plaintext);
             app.context.connection.send(cyphertext);
+            // add to history
+            addMessage('local', plaintext);
         });
+
+        // Data was received
         on(window, 'dataReceive', function (e) {
-            $("#decoded").innerHTML = app.algos[app.decryptionAlgo].decryption(e.detail);
+            addMessage('remote', app.algos[app.decryptionAlgo].decryption(e.detail));
         });
+
+        // Re-decrypt last message, if algo changed and we didn't notice
         on($("#decrypt"), 'click', function() {
-            $("#decoded").innerHTML = app.algos[app.decryptionAlgo].decryption(app.context.received.slice(-1)[0]);
+            $("#history > :last-child").innerHTML = app.algos[app.decryptionAlgo].decryption(app.context.received.slice(-1)[0]);
         });
     });
 })();
