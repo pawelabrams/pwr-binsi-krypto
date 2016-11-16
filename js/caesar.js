@@ -38,5 +38,10 @@ app.algos.caesar = {
 };
 
 app.algosOptions.caesar = {
-    "move": "number"
+    "move": {
+        "type": "number",
+        "default": 3,
+        "tooltip": "Przesunięcie",
+        "placeholder": "→",
+    }
 };

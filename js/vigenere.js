@@ -42,5 +42,10 @@ app.algos.vigenere = {
 };
 
 app.algosOptions.vigenere = {
-    "key": "text"
+    "key": {
+        "type": "text",
+        "default": "",
+        "tooltip": "Klucz",
+        "placeholder": "Klucz",
+    }
 };

@@ -45,13 +45,15 @@ app.decryptionAlgo = "pass";
         element.innerHTML = '';
         for (i in app.algosOptions[algo]) {
             let toAdd = undefined;
-            switch(app.algosOptions[algo][i]) {
+            switch(app.algosOptions[algo][i]["type"]) {
                 case "number":
                 case "text":
                     toAdd = document.createElement("input");
-                    toAdd.type = app.algosOptions[algo][i];
+                    toAdd.type = app.algosOptions[algo][i]["type"];
                     toAdd.name = i;
-                    toAdd.placeholder = i;
+                    toAdd.placeholder = app.algosOptions[algo][i]["placeholder"];
+                    toAdd.title = app.algosOptions[algo][i]["tooltip"];
+                    toAdd.value = app.algosOptions[algo][i]["default"];
             }
             on(toAdd, "change", function() {
                 app[saveField][i] = this.value;
@@ -83,7 +85,7 @@ app.decryptionAlgo = "pass";
             $(".connect").style.display = 'none';
             $(".hangout").style.display = '';
             // Add info about who are we talking to
-            addMessage('log', 'Now talking to ' + conn.peer);
+            addMessage('log', 'Rozmawiasz teraz z ' + conn.peer);
         });
     }
 
@@ -93,7 +95,7 @@ app.decryptionAlgo = "pass";
         window.peer = new Peer(undefined, { host: 'abramowicz.org', port: 9517, path: '/qomm'});
         peer.on('open', function(id) {
             $("#yourId").value = id;
-            addMessage('log', 'You are ' + window.peer.id);
+            addMessage('log', 'Twoje id to ' + window.peer.id);
         });
         peer.on('connection', openHangout);
         on($("#connectButton"), 'click', function() {
