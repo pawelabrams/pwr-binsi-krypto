@@ -53,7 +53,7 @@ app.decryptionAlgo = "pass";
                     toAdd.name = i;
                     toAdd.placeholder = app.algosOptions[algo][i]["placeholder"];
                     toAdd.title = app.algosOptions[algo][i]["tooltip"];
-                    toAdd.value = app.algosOptions[algo][i]["default"];
+                    toAdd.value = app[saveField][i] = app.algosOptions[algo][i]["default"];
             }
             on(toAdd, "change", function() {
                 app[saveField][i] = this.value;
