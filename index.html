@@ -11,9 +11,6 @@
                 <div class="decryption">
                     <select id="decryptionAlgo" title="Zmień algorytm deszyfrowania dla wiadomości przychodzących">
                         <option value=""> </option>
-                        <option value="caesar">Szyfr Cezara</option>
-                        <option value="rot13">ROT13</option>
-                        <option value="vigenere">Vigenère</option>
                         <option value="aes">AES256</option>
                     </select>
                     <span id="decryptionOptions">
@@ -25,9 +22,6 @@
                 <p id="plaintext" contenteditable title="Tekst jawny"></p>
                 <select id="encryptionAlgo" title="Zmień algorytm szyfrowania dla wiadomości wychodzących">
                     <option value=""> </option>
-                    <option value="caesar">Szyfr Cezara</option>
-                    <option value="rot13">ROT13</option>
-                    <option value="vigenere">Vigenère</option>
                     <option value="aes">AES256</option>
                 </select>
                 <span id="encryptionOptions">
@@ -52,10 +46,6 @@
         <script src="js/lib/crypto-js.js"></script>
         <script src="js/lib/peer.min.js"></script>
         <script src="js/init.js"></script>
-        <script src="js/files.js"></script>
-        <script src="js/algos/caesar.js"></script>
-        <script src="js/algos/rot13.js"></script>
-        <script src="js/algos/vigenere.js"></script>
         <script src="js/algos/aes.js"></script>
     </body>
 </html>
