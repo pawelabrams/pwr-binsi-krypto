@@ -2,14 +2,15 @@ app.algos.aes = {
     keyLen: 256,
     encryption: function (plaintext) {
         const key = CryptoJS.enc.Hex.parse(app.encryptionOptions.key);
-        const iv  = key;
+        const iv  = CryptoJS.lib.WordArray.random(16);
         let words = CryptoJS.AES.encrypt(plaintext, key, {iv});
-        return words.ciphertext.toString(CryptoJS.enc.Latin1);
+        return iv.concat(words.ciphertext).toString(CryptoJS.enc.Latin1);
     },
     decryption: function (cyphertext) {
+        cyphertext = CryptoJS.enc.Latin1.parse(cyphertext);
         const key = CryptoJS.enc.Hex.parse(app.decryptionOptions.key);
-        const iv  = key;
-        let words = CryptoJS.AES.decrypt({ciphertext:CryptoJS.enc.Latin1.parse(cyphertext)}, key, {iv});
+        const iv  = cyphertext.words.slice(0,4);
+        let words = CryptoJS.AES.decrypt({ciphertext: cyphertext.words.slice(4)}, key, {iv});
         return words.toString(CryptoJS.enc.Utf8);
     },
 };
