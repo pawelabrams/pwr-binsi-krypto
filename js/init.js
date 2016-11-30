@@ -35,7 +35,9 @@ var app = {
 
 // make encrypted messages show even when no algorithm is selected
 app.algos.pass = {
+    textOutput: function (t) { return t; },
     decryption: function (t) { return t; },
+    isEncryptedFile: function(f) { return false; },
 };
 app.decryptionAlgo = "pass";
 
@@ -63,7 +65,7 @@ app.decryptionAlgo = "pass";
     }
 
     // Function to add messages to history div
-    function addMessage(type, msg) {
+    app.addMessage = function(type, msg) {
         let toAdd = document.createElement("div");
         toAdd.classList.add(type);
         toAdd.innerHTML = msg;
@@ -85,7 +87,9 @@ app.decryptionAlgo = "pass";
             $(".connect").style.display = 'none';
             $(".hangout").style.display = '';
             // Add info about who are we talking to
-            addMessage('log', 'Rozmawiasz teraz z ' + conn.peer);
+            app.addMessage('log', 'Rozmawiasz teraz z ' + conn.peer);
+            // Fire an event
+            window.dispatchEvent(new CustomEvent('connectionEstablished'));
         });
     }
 
@@ -95,7 +99,7 @@ app.decryptionAlgo = "pass";
         window.peer = new Peer(undefined, { host: 'abramowicz.org', port: 9517, path: '/qomm'});
         peer.on('open', function(id) {
             $("#yourId").value = id;
-            addMessage('log', 'Twoje id to ' + window.peer.id);
+            app.addMessage('log', 'Twoje id to ' + window.peer.id);
         });
         peer.on('connection', openHangout);
         on($("#connectButton"), 'click', function() {
@@ -116,22 +120,38 @@ app.decryptionAlgo = "pass";
         on($("#encrypt"), 'click', function() {
             let plaintext = $("#plaintext").innerHTML.replace(/<br[^>]*>/gi, "\n");
             // send cyphertext
-            let cyphertext = app.algos[app.encryptionAlgo].encryption(plaintext);
+            let cyphertext = app.algos[app.encryptionAlgo].encryption(app.algos[app.encryptionAlgo].textInput(plaintext));
             app.context.connection.send(cyphertext);
             // add to history
-            addMessage('local', plaintext);
+            app.addMessage('local', plaintext);
             // clear plaintext field
             $("#plaintext").innerHTML = "";
         });
 
         // Data was received
         on(window, 'dataReceive', function (e) {
-            addMessage('remote', app.algos[app.decryptionAlgo].decryption(e.detail));
+            const msg = app.algos[app.decryptionAlgo].decryption(e.detail);
+            let line;
+            if (app.algos[app.decryptionAlgo].isEncryptedFile(msg)) {
+                let file = app.algos[app.decryptionAlgo].fileOutput(msg);
+                line = `file: <a href="${URL.createObjectURL(file.contents)}"> ${file.filename} </a>`;
+            } else {
+                line = app.algos[app.decryptionAlgo].textOutput(msg);
+            }
+            app.addMessage('remote', line);
         });
 
         // Re-decrypt last message, if algo changed and we didn't notice
         on($("#decrypt"), 'click', function() {
-            $("#history > :last-child").innerHTML = app.algos[app.decryptionAlgo].decryption(app.context.received.slice(-1)[0]);
+            const msg = app.algos[app.decryptionAlgo].decryption(app.context.received.slice(-1)[0]);
+            let line;
+            if (app.algos[app.decryptionAlgo].isEncryptedFile(msg)) {
+                let file = app.algos[app.decryptionAlgo].fileOutput(msg);
+                line = `file: <a download="${file.filename}" href="${URL.createObjectURL(file.contents)}">${file.filename}</a>`;
+            } else {
+                line = app.algos[app.decryptionAlgo].textOutput(msg);
+            }
+            $("#history > :last-child").innerHTML = line;
         });
     });
 })();

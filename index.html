@@ -20,6 +20,7 @@
             </section>
             <div class="encryption">
                 <p id="plaintext" contenteditable title="Tekst jawny"></p>
+                <button id="sendFile" type="button">Plik</button>
                 <select id="encryptionAlgo" title="Zmień algorytm szyfrowania dla wiadomości wychodzących">
                     <option value=""> </option>
                     <option value="aes">AES256</option>
@@ -27,6 +28,13 @@
                 <span id="encryptionOptions">
                 </span>
                 <button id="encrypt" type="button">Zaszyfruj</button>
+            </div>
+            <div id="filesSelector" class="files-selector" style="display: none;">
+                <div class="box">
+                    <p>Wybierz plik do przesłania:</p>
+                    <input id="files" multiple type="file">
+                    <p>Uwaga! Plik zostanie przesłany zaraz po wybraniu!</p>
+                </div>
             </div>
         </div>
         <div class="connect">
@@ -46,6 +54,8 @@
         <script src="js/lib/crypto-js.js"></script>
         <script src="js/lib/peer.min.js"></script>
         <script src="js/init.js"></script>
+        <script src="js/files.js"></script>
+        <script src="js/uint8arrayutils.js"></script>
         <script src="js/algos/aes.js"></script>
     </body>
 </html>

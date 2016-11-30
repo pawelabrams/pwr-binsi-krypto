@@ -1,0 +1,36 @@
+(function() {
+    CryptoJS.enc.Uint8Array = {};
+
+    CryptoJS.enc.Uint8Array.stringify = function (wordArray) {
+        const len = wordArray.words.length;
+        let u8_array = new Uint8Array(wordArray.sigBytes);
+        let offset = 0;
+
+        for (let i = 0; i < len; i++) {
+            let word = wordArray.words[i];
+            u8_array[offset++] = word >> 24;
+            u8_array[offset++] = (word >> 16) & 0xff;
+            u8_array[offset++] = (word >> 8) & 0xff;
+            u8_array[offset++] = word & 0xff;
+        }
+        return u8_array;
+    }
+
+    CryptoJS.enc.Uint8Array.parse = function (u8Array) {
+        let words = [], i = 0, len = u8Array.length;
+
+        while (i < len) {
+            words.push(
+                (u8Array[i++] << 24) |
+                (u8Array[i++] << 16) |
+                (u8Array[i++] << 8)  |
+                (u8Array[i++])
+            );
+        }
+
+        return {
+            sigBytes: u8Array.length,
+            words: words
+        };
+    }
+})();

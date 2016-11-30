@@ -98,11 +98,33 @@ body {
     padding: 8px 5px 5px;
     margin: 0 5px;
 }
+#sendFile {
+    margin-right: 5px;
+}
 #encryptionOptions {
     padding: 0 3px;
 }
 input[type="number"] {
     width: 60px;
+}
+
+.files-selector {
+    background-color: rgba(240, 240, 240, 0.6);
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+.files-selector .box {
+    background: #fff;
+    color: #888;
+    font-size: 14px;
+    margin: 150px auto 0;
+    padding: 20px 40px;
+    text-align: center;
+    width: 450px;
+    box-shadow: rgba(0,0,0,0.1) 0 0 20px;
 }
 
 .page-footer {
