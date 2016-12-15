@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+  <title>Porównanie szybkości działania algorytmu RSA w implementacji bibliotecznej i mojej</title>
+  <meta charset="utf-8">
+  <script type="text/javascript">
+    function $(selector, context) {
+      context = context || document;
+      return context.querySelector(selector);
+    }
+    app = { algos: {}, algosOptions: {}, decryptionOptions: {}, encryptionOptions: {} }
+
+    window.addEventListener('load', function() {
+      // Test the library
+      $('#testLib').addEventListener('click', function() {
+
+        iter = parseInt($('#iterLib').value);
+
+        var encrypt = new JSEncrypt();
+        encrypt.setPublicKey($('#pubkey').value);
+        plaintext = $('#input').value;
+
+        var decrypt = new JSEncrypt();
+        decrypt.setPrivateKey($('#privkey').value);
+
+        start = performance.now();
+        for (let i = 0; i < iter; i++) {
+            encrypted = encrypt.encrypt(plaintext);
+            uncrypted = decrypt.decrypt(encrypted);
+        }
+        stop = performance.now();
+
+        if (uncrypted == $('#input').value) {
+          alert('Wiadomość rozszyfrowano poprawnie, średnio w ' + (stop-start)/iter + "ms");
+        } else {
+          alert('Coś poszło nie tak');
+        }
+      }, false);
+
+      // Test my implementation
+      $('#testMy').addEventListener('click', function() {
+
+        iter = parseInt($('#iterMy').value);
+        app.encryptionOptions.e = $('#e').value;
+        app.encryptionOptions.n = app.decryptionOptions.n = $('#n').value;
+        app.decryptionOptions.d = $('#d').value;
+
+        plaintext = app.algos.rsa.textInput($('#input').value);
+        // console.log(plaintext);
+        start = performance.now();
+        for (let i = 0; i < iter; i++) {
+            ciphertext = app.algos.rsa.encryption(plaintext);
+            console.log(ciphertext);
+            decrypthex = app.algos.rsa.decryption(ciphertext);
+        }
+        stop = performance.now();
+        decrypted = app.algos.rsa.textOutput(decrypthex);
+
+        if (decrypted == $('#input').value) {
+          alert('Wiadomość rozszyfrowano poprawnie, średnio w ' + (stop-start)/iter + "ms");
+        } else {
+          alert('Coś poszło nie tak');
+        }
+
+      }, false);
+    }, false);
+  </script>
+  <script src="../../js/lib/jsencrypt.min.js"></script>
+  <script src="../../js/lib/big-integer.min.js"></script>
+  <script src="../../js/algos/rsa.js"></script>
+</head>
+<body>
+
+
+<div style="margin: 0 8% 2%;">
+  <p> Wykonał: Paweł Abramowicz </p>
+  <label for="input">Tekst do zaszyfrowania:</label><br>
+  <textarea id="input" name="input" type="text" rows=4 cols=130>Test!</textarea><br>
+</div>
+
+
+<div style="width: 40%; margin-left: 8%; float: left;">
+  <label for="privkey">Klucz prywatny</label><br>
+  <code>openssl genrsa -out private_key.pem 2048</code><br>
+  <textarea id="privkey" rows="15" cols="65">-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEAp5ZfMUom+tR0iW94dgi14bm0PBuBk+BkoQ6BweQ97g03l+Da
+B01FasY6+RS3eQ81Af1Xqj9mo24woJML5YcLuZDrIbRZgbIOfRbG3ZIv86If9E56
+WKdYXuvMpBloD5wqZZk5M6R1qfDe1SVa+Ox1janP1VgF0ml71EtwvOZCmJzG/yTm
+9uoOAVdjwcKoP4k5YyEVZhiOeuwNx92oFj3mdPklH9YegWCusOa0SmBN+PUiM+G0
+2rPIhqdzwloSufMYd7kFzIsFvpreSKM2194pPZWbjn8cFd1toFMpv1WMG5HEEVFV
+APQJoc6auxsjPQrGKMhN8IBklECqbCQJJpUGIwIDAQABAoIBAQCUH1dx1E2Ro5iB
+JPI+uUIxCZchDVrBHjMzGwRbIGYQcsQxTD7I92YkkqLrJoFn0aYTZR1Hz5PjXXBD
+bNS2AV++mzUH7ES0WnFt5GTOz/fsCd7ea0K9+uMjupx8aixMp8XdWMlzOKf7FXeO
+wt6eZzkbhfy5X3x91lfpcuhpPcec5H4RmKtfKipTe8dlB6plKuZex8liHkEkkGKH
+DWCr9C7u5Ej9tHDkty2jON9ttxt8uOnEu00VWg3XxpcH7Sxm5J+J+Iv7oEVHn027
+gHgQCr2d2gWoosMsx+pDea1C2HKfNyAUWwcX38v5qvhLAG4T6zBbzA34+vJRjc9f
+FT12J555AoGBAN1/Kbe2HRoCTYFF7uwll0b6qqJgyGa4+KXOJTx0qltslkTbOQFM
+j/pQ9lXSD4oqsF2JlUktGCjAV8d+UOC9OZ2I/cFJPLQudqrzxaH7GQe/3s30dHjQ
+7ZCvc0DJK3XIJ6NggAE009XAcsWm+upwUnos4KjESK29LAnVJLuHEqgFAoGBAMGx
+ah+K4edhTk/+2zy6OeGAHFx/1jPGaqYDvERBnJ3pnd0d8O1q39XeUkRf5lZ6CROA
+geE60cVk7gv9clacgwDhe0BSjH4e+jIpRCa/gmSyJzPE3V6dP0bo/9VRqIk+Tb6L
+Z/SXvwt75DfxcVrXdCa0nKkSEVje0GveuAFbuhYHAoGAJhKSmCpsjCjzK5JaxCqd
++yxhIjIioE2RJ+bsTZz8H2Tl24YXIVsIsI00GoJV+3jlAd8BUye2LGMLc5YJzueX
+vLVscMnm7k3CRhZK1VH09nkLkjk/v/ihrSoLVIp/tuolrhaLSinLc8V1tPXD0YJn
+GusV3syGdZ67sCD8BGPuWAUCgYEAmxOnqt9wJOekYqni8AkNxHzkuC5l2og25PpC
+psd9VHUxvlJ1jjCuS7Y3WaUKbxw/3gxacHC+ePNpH9Jo0+11eaQOIR62e1fj63tc
+pEVaabK1bl5k+padjfGIu0soy9FFP5Svw4YnIFOuEhhOMHQl+8NJVpgvqV6jsmnc
+GsJNB8sCgYBOM6Zf8JwX4a5nkrWMAXxHKC3kAhxvVFQTCh+YlWEQTHkLVdbFzrbE
+xboP4f432/bRFolfGlz5ixavwPQqSIUMX0ASeKq8ONRlFixI6ENedPZ/cNcejGbK
+0jaKXFkklQTHyIaUfH5xKwgO0hjM46PDOyeWobDxCQDieTsiJdu3yg==
+-----END RSA PRIVATE KEY-----
+</textarea><br><br>
+  <label for="pubkey">Klucz publiczny</label><br>
+  <code>openssl rsa -in private_key.pem -pubout > public_key.pub</code><br>
+  <textarea id="pubkey" rows="15" cols="65">-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp5ZfMUom+tR0iW94dgi1
+4bm0PBuBk+BkoQ6BweQ97g03l+DaB01FasY6+RS3eQ81Af1Xqj9mo24woJML5YcL
+uZDrIbRZgbIOfRbG3ZIv86If9E56WKdYXuvMpBloD5wqZZk5M6R1qfDe1SVa+Ox1
+janP1VgF0ml71EtwvOZCmJzG/yTm9uoOAVdjwcKoP4k5YyEVZhiOeuwNx92oFj3m
+dPklH9YegWCusOa0SmBN+PUiM+G02rPIhqdzwloSufMYd7kFzIsFvpreSKM2194p
+PZWbjn8cFd1toFMpv1WMG5HEEVFVAPQJoc6auxsjPQrGKMhN8IBklECqbCQJJpUG
+IwIDAQAB
+-----END PUBLIC KEY-----
+</textarea><br><br>
+  Iteracje: <input id="iterLib" type="text" value="5" style="width: 50px">x <input id="testLib" type="button" value="Testuj implementację biblioteczną" /><br>
+</div>
+
+
+<div style="margin-left: 52%;">
+  <label for="d">Wykładnik prywatny</label><br>
+  <code>openssl rsa -inform PEM -modulus -noout < private_key.pem</code><br>
+  <textarea id="d" rows="15" cols="65">941f5771d44d91a3988124f23eb942310997210d5ac11e33331b045b20661072c4314c3ec8f7662492a2eb268167d1a613651d47cf93e35d70436cd4b6015fbe9b3507ec44b45a716de464cecff7ec09dede6b42bdfae323ba9c7c6a2c4ca7c5dd58c97338a7fb15778ec2de9e67391b85fcb95f7c7dd657e972e8693dc79ce47e1198ab5f2a2a537bc76507aa652ae65ec7c9621e41249062870d60abf42eeee448fdb470e4b72da338df6db71b7cb8e9c4bb4d155a0dd7c69707ed2c66e49f89f88bfba045479f4dbb8078100abd9dda05a8a2c32cc7ea4379ad42d8729f3720145b0717dfcbf9aaf84b006e13eb305bcc0df8faf2518dcf5f153d76279e79</textarea><br><br>
+  <label for="e">Wykładnik publiczny</label><br>
+  <code>openssl rsa -pubin -inform PEM -text -noout < public_key.pem</code><br>
+  <textarea id="e" rows="1" cols="65">10001</textarea><br><br>
+  <label for="n">Dzielnik</label><br>
+  <code>openssl rsa -inform PEM -modulus -noout < private_key.pem</code><br>
+  <code>openssl rsa -pubin -inform PEM -modulus -noout < public_key.pem</code><br>
+  <textarea id="n" rows="15" cols="65">a7965f314a26fad474896f787608b5e1b9b43c1b8193e064a10e81c1e43dee0d3797e0da074d456ac63af914b7790f3501fd57aa3f66a36e30a0930be5870bb990eb21b45981b20e7d16c6dd922ff3a21ff44e7a58a7585eebcca419680f9c2a65993933a475a9f0ded5255af8ec758da9cfd55805d2697bd44b70bce642989cc6ff24e6f6ea0e015763c1c2a83f893963211566188e7aec0dc7dda8163de674f9251fd61e8160aeb0e6b44a604df8f52233e1b4dab3c886a773c25a12b9f31877b905cc8b05be9ade48a336d7de293d959b8e7f1c15dd6da05329bf558c1b91c411515500f409a1ce9abb1b233d0ac628c84df080649440aa6c240926950623</textarea><br><br>
+  Iteracje: <input id="iterMy" type="text" value="5" style="width: 50px">x <input id="testMy" type="button" value="Test mojej implementacji" /><br>
+</div>
+
+</body>
+</html>
