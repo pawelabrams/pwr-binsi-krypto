@@ -46,7 +46,7 @@
         app.decryptionOptions.d = $('#d').value;
 
         plaintext = app.algos.rsa.textInput($('#input').value);
-        // console.log(plaintext);
+        console.log(plaintext);
         start = performance.now();
         for (let i = 0; i < iter; i++) {
             ciphertext = app.algos.rsa.encryption(plaintext);
@@ -55,6 +55,7 @@
         }
         stop = performance.now();
         decrypted = app.algos.rsa.textOutput(decrypthex);
+        console.log(decrypted);
 
         if (decrypted == $('#input').value) {
           alert('Wiadomość rozszyfrowano poprawnie, średnio w ' + (stop-start)/iter + "ms");
@@ -66,7 +67,8 @@
     }, false);
   </script>
   <script src="../../js/lib/jsencrypt.min.js"></script>
-  <script src="../../js/lib/big-integer.min.js"></script>
+  <script src="../../js/lib/sjcl.polyfill.js"></script>
+  <script src="../../js/lib/sjcl.bn.js"></script>
   <script src="../../js/algos/rsa.js"></script>
 </head>
 <body>
