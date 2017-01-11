@@ -18,31 +18,9 @@ app.algos.rsa = {
         return ret;
     },
     textOutput: function (decryptionOutput) {
-        // rewrite the decryptionOutput to Uint8Arrays
-        let arrs = [];
-        let fullLen = 0;
-        for (let i = 0; i < decryptionOutput.length; i++) {
-            const arr = Uint8Array.from(
-                decryptionOutput[i].toString().match(/.{2}/g) || [],
-                function(byte) {
-                    return parseInt(byte, 16);
-                }
-            );
-            arrs.push(arr.slice(1));
-            fullLen += arr.length - 1;
-        }
-
-        // merge the arrays
-        let ret = new Uint8Array(fullLen);
-        let cur_pos = 0;
-        for (let i = 0; i < arrs.length; i++) {
-            ret.set(arrs[i], cur_pos);
-            cur_pos += arrs[i].length;
-        }
-
         // return the merged array as utf-8 string
         let td = new TextDecoder("utf-8");
-        return td.decode(ret).slice(0, -1);
+        return td.decode(decryptionOutput).slice(0, -1);
     },
     fileInput: function (fileName, fileContent) {
 
@@ -55,7 +33,7 @@ app.algos.rsa = {
         };
     },
     isEncryptedFile: function (decryptionOutput) {
-        return (decryptionOutput.slice(-1)[0].limbs[0] & 0xFF) != this.sepCharCode;
+        return decryptionOutput.slice(-1)[0] != this.sepCharCode;
     },
     encryption: function (plaintext) {
         const e = new sjcl.bn(app.encryptionOptions.e);
@@ -70,10 +48,31 @@ app.algos.rsa = {
         cyphertext = cyphertext.split(";");
         const d = new sjcl.bn(app.decryptionOptions.d);
         const n = new sjcl.bn(app.decryptionOptions.n);
-        let ret = [];
+
+        // decode chunks and write them to Uint8Arrays
+        let arrs = [];
+        let fullLen = 0;
         for (let i = 0; i < cyphertext.length; i++) {
-            cypher = new sjcl.bn(cyphertext[i]);
-            ret.push(cypher.powermod(d, n));
+            // decode a chunk
+            plainchunk = (new sjcl.bn(cyphertext[i])).powermod(d, n);
+
+            // rewrite it to Uint8Array
+            const arr = Uint8Array.from(
+                plainchunk.toString().match(/.{2}/g) || [],
+                function(byte) {
+                    return parseInt(byte, 16);
+                }
+            );
+            arrs.push(arr.slice(1));
+            fullLen += arr.length - 1;
+        }
+
+        // merge the arrays
+        let ret = new Uint8Array(fullLen);
+        let cur_pos = 0;
+        for (let i = 0; i < arrs.length; i++) {
+            ret.set(arrs[i], cur_pos);
+            cur_pos += arrs[i].length;
         }
         return ret;
     },
