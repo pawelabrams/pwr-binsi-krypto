@@ -42,10 +42,18 @@ app.algos.pass = {
 app.decryptionAlgo = "pass";
 
 (function() {
+    function changeHelper(saveField, field) {
+        return function() {
+            app[saveField][field] = this.value;
+        }
+    }
     // Change enc/dec options
     function changeOptions(element, algo, saveField) {
         element.innerHTML = '';
         for (i in app.algosOptions[algo]) {
+            if (app.algosOptions[algo][i].groups !== undefined && app.algosOptions[algo][i].groups.indexOf(saveField) < 0) {
+                continue;
+            }
             let toAdd = undefined;
             switch(app.algosOptions[algo][i]["type"]) {
                 case "number":
@@ -57,9 +65,7 @@ app.decryptionAlgo = "pass";
                     toAdd.title = app.algosOptions[algo][i]["tooltip"];
                     toAdd.value = app[saveField][i] = app.algosOptions[algo][i]["default"];
             }
-            on(toAdd, "change", function() {
-                app[saveField][i] = this.value;
-            });
+            on(toAdd, "change", changeHelper(saveField, i));
             element.appendChild(toAdd);
         }
     }

@@ -12,6 +12,7 @@
                     <select id="decryptionAlgo" title="Zmień algorytm deszyfrowania dla wiadomości przychodzących">
                         <option value=""> </option>
                         <option value="aes">AES256</option>
+                        <option value="rsa">RSA</option>
                     </select>
                     <span id="decryptionOptions">
                     </span>
@@ -24,6 +25,7 @@
                 <select id="encryptionAlgo" title="Zmień algorytm szyfrowania dla wiadomości wychodzących">
                     <option value=""> </option>
                     <option value="aes">AES256</option>
+                    <option value="rsa">RSA</option>
                 </select>
                 <span id="encryptionOptions">
                 </span>
@@ -52,10 +54,13 @@
             </footer>
         </div>
         <script src="js/lib/crypto-js.js"></script>
+        <script src="js/lib/sjcl.polyfill.js"></script>
+        <script src="js/lib/sjcl.bn.js"></script>
         <script src="js/lib/peer.min.js"></script>
         <script src="js/init.js"></script>
         <script src="js/files.js"></script>
         <script src="js/uint8arrayutils.js"></script>
         <script src="js/algos/aes.js"></script>
+        <script src="js/algos/rsa.js"></script>
     </body>
 </html>
