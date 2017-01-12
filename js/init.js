@@ -140,7 +140,7 @@ app.decryptionAlgo = "pass";
             let line;
             if (app.algos[app.decryptionAlgo].isEncryptedFile(msg)) {
                 let file = app.algos[app.decryptionAlgo].fileOutput(msg);
-                line = `file: <a href="${URL.createObjectURL(file.contents)}"> ${file.filename} </a>`;
+                line = `file: <a download="${file.filename}" href="${URL.createObjectURL(file.contents)}">${file.filename}</a>`;
             } else {
                 line = app.algos[app.decryptionAlgo].textOutput(msg);
             }
