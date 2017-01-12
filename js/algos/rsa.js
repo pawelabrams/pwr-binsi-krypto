@@ -1,21 +1,23 @@
 app.algos.rsa = {
     separator: "/",
     sepCharCode: "/".charCodeAt(0),
-    chunkSize: 250, // TODO: change
+    getChunkSize: function(hexLength) {
+        // N - 2, where N is length in bytes (hexLength/2)
+        return Math.ceil(hexLength / 2) - 2;
+    },
+    getPadding: function() {
+        // return random 2-hex (byte) from 1-255 to be used as padding. Not exactly secure, but...
+        return ('0' + Math.floor(Math.random() * 240 + 16).toString(16)).slice(-2);
+    },
+    toHex: function (input) {
+        return Array.prototype.map.call(input, function(x) {
+            return ('00' + x.toString(16)).slice(-2);
+        });
+    },
     textInput: function (plaintext) {
         // convert to hex (so that sjcl.bn gets them as a number)
         const uint8array = new TextEncoder("utf-8").encode(plaintext + this.separator);
-        const hex = Array.prototype.map.call(uint8array, function(x) {
-            return ('00' + x.toString(16)).slice(-2);
-        });
-        const hexLen = hex.length;
-
-        // return the chunks of bigints
-        let ret = [];
-        for (let i = 0; i < hexLen; i += this.chunkSize) {
-            ret.push(new sjcl.bn(hex.slice(i, i + this.chunkSize).join('')));
-        }
-        return ret;
+        return this.toHex(uint8array);
     },
     textOutput: function (decryptionOutput) {
         // return the merged array as utf-8 string
@@ -23,13 +25,15 @@ app.algos.rsa = {
         return td.decode(decryptionOutput).slice(0, -1);
     },
     fileInput: function (fileName, fileContent) {
-
+        // convert to hex (so that sjcl.bn gets them as a number)
+        const fileEnding = new TextEncoder("utf-8").encode(this.separator + fileName);
+        return this.toHex(fileContent).concat(this.toHex(fileEnding));
     },
     fileOutput: function (decryptionOutput) {
-
+        const pos_slash = decryptionOutput.lastIndexOf(this.sepCharCode);
         return {
-            filename: x,
-            contents: x,
+            filename: (new TextDecoder("utf-8")).decode(decryptionOutput.slice(pos_slash+1)),
+            contents: new Blob([decryptionOutput.slice(0, pos_slash)]),
         };
     },
     isEncryptedFile: function (decryptionOutput) {
@@ -38,16 +42,25 @@ app.algos.rsa = {
     encryption: function (plaintext) {
         const e = new sjcl.bn(app.encryptionOptions.e);
         const n = new sjcl.bn(app.encryptionOptions.n);
+        const chunkSize = this.getChunkSize(app.encryptionOptions.n.length);
         let ret = [];
-        for (let i = 0; i < plaintext.length; i++) {
-            ret.push(plaintext[i].powermod(e, n).toString().slice(2));
+
+        // get the chunks of bigints
+        for (let i = 0; i < plaintext.length; i += chunkSize) {
+            plainchunk = this.getPadding() + plaintext.slice(i, i + chunkSize).join('');
+            let chunk_bn = new sjcl.bn(plainchunk);
+
+            // slice 0x off the (m^e mod n) hex and push it to the end of the array
+            ret.push(chunk_bn.powermod(e, n).toString().slice(2));
         }
+
         return ret.join(';');
     },
     decryption: function (cyphertext) {
         cyphertext = cyphertext.split(";");
         const d = new sjcl.bn(app.decryptionOptions.d);
         const n = new sjcl.bn(app.decryptionOptions.n);
+        const chunkSize = this.getChunkSize(app.decryptionOptions.n.length);
 
         // decode chunks and write them to Uint8Arrays
         let arrs = [];
@@ -63,8 +76,8 @@ app.algos.rsa = {
                     return parseInt(byte, 16);
                 }
             );
-            arrs.push(arr.slice(1));
-            fullLen += arr.length - 1;
+            arrs.push(arr.slice(2)); // |0x|PP|, PP is padding
+            fullLen += arr.length - 2;
         }
 
         // merge the arrays
