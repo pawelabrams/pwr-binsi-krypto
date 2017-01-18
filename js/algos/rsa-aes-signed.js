@@ -63,11 +63,10 @@ app.algos.rsaAesSigned = {
         }
 
         let decrypted = app.algos.aes.decryption(cyphertext.join(';'));
-        if (check == CryptoJS.SHA256(decrypted.toString()).toString()) {
-          return decrypted;
-        } else {
+        if (check !== CryptoJS.SHA256(decrypted.toString()).toString()) {
           alert ("couldn't verify!");
         }
+        return decrypted;
     },
 }
 
