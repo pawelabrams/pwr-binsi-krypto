@@ -1,4 +1,4 @@
-app.algos.rsaaes = {
+app.algos.rsaAes = {
     keyNegotiated: {
         encryption: false,
         decryption: false,
@@ -43,7 +43,7 @@ app.algos.rsaaes = {
     },
 }
 
-app.algosOptions.rsaaes = {
+app.algosOptions.rsaAes = {
     "n": {
         "type": "text",
         "default": "a7965f314a26fad474896f787608b5e1b9b43c1b8193e064a10e81c1e43dee0d3797e0da074d456ac63af914b7790f3501fd57aa3f66a36e30a0930be5870bb990eb21b45981b20e7d16c6dd922ff3a21ff44e7a58a7585eebcca419680f9c2a65993933a475a9f0ded5255af8ec758da9cfd55805d2697bd44b70bce642989cc6ff24e6f6ea0e015763c1c2a83f893963211566188e7aec0dc7dda8163de674f9251fd61e8160aeb0e6b44a604df8f52233e1b4dab3c886a773c25a12b9f31877b905cc8b05be9ade48a336d7de293d959b8e7f1c15dd6da05329bf558c1b91c411515500f409a1ce9abb1b233d0ac628c84df080649440aa6c240926950623",
